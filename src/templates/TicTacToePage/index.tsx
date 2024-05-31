@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { Board } from '@/types/Board';
-import { hasFourInARow } from '@/utilities/TicTacToeEngine';
+import { hasFourInARow, makeMove } from '@/utilities/TicTacToeEngine';
 import { computersMove } from '@/utilities/AlphaBeta';
 import { Cell } from '@/types/Cell';
 
@@ -59,25 +59,22 @@ export const TicTacToePage: NextPage = () => {
     }
   }, [isWhiteTurn, board, gameWon]);
 
-  const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {
-    const newBoard = [...board];
-    if (newBoard[move.row][move.col] === ' ') {
-      newBoard[move.row][move.col] = player;
+  const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {    
+      const newBoard = makeMove(board, move.col, isWhiteTurn);
       setBoard(newBoard);
 
       if (hasFourInARow(newBoard, move.row, move.col, player)) {
         setGameWon(true);
       } else {
         setIsWhiteTurn(cur => !cur); // Switch turns
-      }
-    } else {
-      alert("INVALID MOVE");
-    }
+      }    
   };
 
   const handleClick = (row: number, col: number) => {
     if (board[row][col] === ' ' && !gameWon && isWhiteTurn) {
       makeMoveAndUpdateBoard({row, col}, 'X');
+    } else {
+      alert("INVALID MOVE");
     }
   };
 
@@ -93,8 +90,11 @@ export const TicTacToePage: NextPage = () => {
                 className="h-40 w-40 border rounded-lg border-blue-400 bg-blue-400 flex items-center justify-center font-bold font-mono text-9xl"
                 key={colIndex}
                 onClick={() => {
-                  
-                  handleClick(rowIndex, colIndex)
+                  if (gameWon) {
+                    alert("GAME IS OVER");
+                  } else {
+                    handleClick(rowIndex, colIndex)
+                  }
                 }}
               >
                 {cell === 'X' ? <Image src="./white.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./red.svg" width={100} height={100} alt="O" /> : null}

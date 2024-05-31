@@ -35,6 +35,26 @@ function checkDirection(board: Board, row: number, col: number, dirRow: number, 
     return directions.some(([dirRow, dirCol]) => checkDirection(board, row, col, dirRow, dirCol, symbol));
   }
 
+  export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {
+    if (board[5][col] === " ") {
+      if (hasFourInARow(board, 5, col, isWhiteTurn ? "X" : "O")) {
+        return [...board];
+      }
+      board[5][col] = isWhiteTurn ? "X" : "O";
+    }else {      
+      for (let row = 0; col <= 5; row++) {
+        const curPos = board[row][col];         
+        if (curPos !== " " && row > 0) {
+          if (hasFourInARow(board, row, col, isWhiteTurn ? "X" : "O")) {
+            return [...board];
+          }
+          board[row-1][col] = isWhiteTurn ? "X" : "O";          
+          break;
+        }
+      }
+    }
+    return [...board];
+  }
 
   export function isBoardFull(board: Board): boolean {
     return board.every(row => row.every(cell => cell !== ' '));

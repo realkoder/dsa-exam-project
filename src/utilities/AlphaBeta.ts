@@ -1,5 +1,5 @@
 import { Board } from "@/types/Board";
-import { hasFourInARow, isBoardFull } from "./TicTacToeEngine";
+import { hasFourInARow, isBoardFull, makeMove } from "./TicTacToeEngine";
 
 type Move = {
     row: number;
@@ -15,7 +15,7 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
     if (isMaximizingPlayer) {
         let maxEval = -Infinity;
         for (let move of getPossibleMoves(board)) {
-            const evaluation = minimaxWithAlphaBeta(makeMove(board, move, 'O'), depth - 1, false, alpha, beta);
+            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, false), depth - 1, false, alpha, beta);
             maxEval = Math.max(maxEval, evaluation);
             alpha = Math.max(alpha, evaluation);
             if (beta <= alpha) break;
@@ -24,7 +24,7 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
     } else {
         let minEval = Infinity;
         for (let move of getPossibleMoves(board)) {
-            const evaluation = minimaxWithAlphaBeta(makeMove(board, move, 'X'), depth - 1, true, alpha, beta);
+            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, true), depth - 1, true, alpha, beta);
             minEval = Math.min(minEval, evaluation);
             beta = Math.min(beta, evaluation);
             if (beta <= alpha) break;
@@ -39,7 +39,7 @@ export function computersMove(board: Board, depth: number = 5): Move {
     let bestMove: Move | null = null;
 
     for (let move of getPossibleMoves(board)) {
-        const newBoard = makeMove(board, move, 'O');
+        const newBoard = makeMove(board, move.col, false);
         const score = minimaxWithAlphaBeta(newBoard, depth, false, -Infinity, Infinity);
 
         if (score > bestScore) {
@@ -60,17 +60,18 @@ function getPossibleMoves(board: Board): Move[] {
             }            
         }
     }
+    console.log(moves)
     return moves;
 }
 
 
-function makeMove(board: Board, move: Move, player: 'X' | 'O'): Board {
-    const newBoard = board.map(row => [...row]);
-    if (newBoard[move.row][move.col] === ' ') {
-        newBoard[move.row][move.col] = player;
-    }
-    return newBoard;
-}
+// function makeMove(board: Board, move: Move, player: 'X' | 'O'): Board {
+//     const newBoard = board.map(row => [...row]);
+//     if (newBoard[move.row][move.col] === ' ') {
+//         newBoard[move.row][move.col] = player;
+//     }
+//     return newBoard;
+// }
 
 function checkWin(board: Board): 'X' | 'O' | null {
     for (let row = 0; row < board.length; row++) {
