@@ -8,7 +8,7 @@ import { computersMove } from '@/utilities/AlphaBeta';
 import { Cell } from '@/types/Cell';
 
 
-export const TicTacToePage: NextPage = () => {
+export const TicTacToePage: NextPage = () => {    
   const [board, setBoard] = useState<Board>([
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
@@ -17,8 +17,8 @@ export const TicTacToePage: NextPage = () => {
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
   ]);
-  const [isXTurn, setIsXTurn] = useState(true);
-  const [gameWon, setGameWon] = useState(false);
+  const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White is player and red is computer
+  const [gameWon, setGameWon] = useState(false);  
 
   // Reset the game after a win
   useEffect(() => {
@@ -42,12 +42,12 @@ export const TicTacToePage: NextPage = () => {
       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
       [' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ]);
-    setIsXTurn(true);
+    setIsWhiteTurn(true);
   };
 
   useEffect(() => {
 
-    if (!isXTurn && !gameWon) {
+    if (!isWhiteTurn && !gameWon) {
       // Artificial delay to simulate the computer "thinking"
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
@@ -57,7 +57,7 @@ export const TicTacToePage: NextPage = () => {
         }
       }, delay);
     }
-  }, [isXTurn, board, gameWon]);
+  }, [isWhiteTurn, board, gameWon]);
 
   const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {
     const newBoard = [...board];
@@ -68,13 +68,15 @@ export const TicTacToePage: NextPage = () => {
       if (hasFourInARow(newBoard, move.row, move.col, player)) {
         setGameWon(true);
       } else {
-        setIsXTurn(cur => !cur); // Switch turns
+        setIsWhiteTurn(cur => !cur); // Switch turns
       }
+    } else {
+      alert("INVALID MOVE");
     }
   };
 
   const handleClick = (row: number, col: number) => {
-    if (board[row][col] === ' ' && !gameWon && isXTurn) {
+    if (board[row][col] === ' ' && !gameWon && isWhiteTurn) {
       makeMoveAndUpdateBoard({row, col}, 'X');
     }
   };
@@ -90,7 +92,10 @@ export const TicTacToePage: NextPage = () => {
               <button
                 className="h-40 w-40 border rounded-lg border-blue-400 bg-blue-400 flex items-center justify-center font-bold font-mono text-9xl"
                 key={colIndex}
-                onClick={() => handleClick(rowIndex, colIndex)}
+                onClick={() => {
+                  
+                  handleClick(rowIndex, colIndex)
+                }}
               >
                 {cell === 'X' ? <Image src="./green.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./pink.svg" width={100} height={100} alt="O" /> : null}
               </button>
