@@ -97,7 +97,7 @@ export const TicTacToePage: NextPage = () => {
                   handleClick(rowIndex, colIndex)
                 }}
               >
-                {cell === 'X' ? <Image src="./green.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./pink.svg" width={100} height={100} alt="O" /> : null}
+                {cell === 'X' ? <Image src="./white.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./red.svg" width={100} height={100} alt="O" /> : null}
               </button>
             ))}
           </div>
