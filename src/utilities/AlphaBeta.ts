@@ -15,7 +15,7 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
     if (isMaximizingPlayer) {
         let maxEval = -Infinity;
         for (let move of getPossibleMoves(board)) {
-            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, false), depth - 1, false, alpha, beta);
+            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, false).newBoard, depth - 1, false, alpha, beta);
             maxEval = Math.max(maxEval, evaluation);
             alpha = Math.max(alpha, evaluation);
             if (beta <= alpha) break;
@@ -24,7 +24,7 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
     } else {
         let minEval = Infinity;
         for (let move of getPossibleMoves(board)) {
-            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, true), depth - 1, true, alpha, beta);
+            const evaluation = minimaxWithAlphaBeta(makeMove(board, move.col, true).newBoard, depth - 1, true, alpha, beta);
             minEval = Math.min(minEval, evaluation);
             beta = Math.min(beta, evaluation);
             if (beta <= alpha) break;
@@ -39,7 +39,7 @@ export function computersMove(board: Board, depth: number = 5): Move {
     let bestMove: Move | null = null;
 
     for (let move of getPossibleMoves(board)) {
-        const newBoard = makeMove(board, move.col, false);
+        const { newBoard } = makeMove(board, move.col, false);
         const score = minimaxWithAlphaBeta(newBoard, depth, false, -Infinity, Infinity);
 
         if (score > bestScore) {
@@ -59,8 +59,7 @@ function getPossibleMoves(board: Board): Move[] {
                 moves.push({ row, col });
             }            
         }
-    }
-    console.log(moves)
+    }    
     return moves;
 }
 

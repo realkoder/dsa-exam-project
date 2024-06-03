@@ -24,6 +24,7 @@ export const TicTacToePage: NextPage = () => {
   useEffect(() => {
     if (gameWon) {
       // Show winning state, then reset after a delay
+      setIsWhiteTurn(false);
       const timeout = setTimeout(() => {
         handleReset();
         setGameWon(false); // Reset gameWon to allow a new game to start
@@ -45,26 +46,28 @@ export const TicTacToePage: NextPage = () => {
     setIsWhiteTurn(true);
   };
 
-  useEffect(() => {
-
+  useEffect(() => {    
     if (!isWhiteTurn && !gameWon) {
       // Artificial delay to simulate the computer "thinking"
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
-        const computerMove = computersMove(board);
+        const boardCopy = [...board.map(row => [...row])];
+        const computerMove = computersMove(boardCopy);
         if (computerMove) {
           makeMoveAndUpdateBoard(computerMove, 'O'); // 'O' represents the computer's move
         }
       }, delay);
     }
-  }, [isWhiteTurn, board, gameWon]);
+  }, [isWhiteTurn, gameWon]);
 
-  const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {    
-      const newBoard = makeMove(board, move.col, isWhiteTurn);
+  const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {
+    const boardCopy = [...board.map(row => [...row])];
+      const {newBoard, isGameOver} = makeMove(boardCopy, move.col, isWhiteTurn);
       setBoard(newBoard);
-
-      if (hasFourInARow(newBoard, move.row, move.col, player)) {
+      
+      if (isGameOver) {
         setGameWon(true);
+        alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`)
       } else {
         setIsWhiteTurn(cur => !cur); // Switch turns
       }    

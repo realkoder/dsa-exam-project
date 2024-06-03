@@ -30,15 +30,15 @@ function checkDirection(board: Board, row: number, col: number, dirRow: number, 
       [1, -1], // Diagonal Down-Left
       [1, 1]   // Diagonal Down-Right
     ];
-  
+    
     // Iterate over all directions, check if four in a row exists
     return directions.some(([dirRow, dirCol]) => checkDirection(board, row, col, dirRow, dirCol, symbol));
   }
 
-  export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {
+  export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {    
     if (board[5][col] === " ") {
       if (hasFourInARow(board, 5, col, isWhiteTurn ? "X" : "O")) {
-        return [...board];
+        return {newBoard: board, isGameOver: true };
       }
       board[5][col] = isWhiteTurn ? "X" : "O";
     }else {      
@@ -46,14 +46,14 @@ function checkDirection(board: Board, row: number, col: number, dirRow: number, 
         const curPos = board[row][col];         
         if (curPos !== " " && row > 0) {
           if (hasFourInARow(board, row, col, isWhiteTurn ? "X" : "O")) {
-            return [...board];
+            return { newBoard: board, isGameOver: true };
           }
-          board[row-1][col] = isWhiteTurn ? "X" : "O";          
+          board[row-1][col] = isWhiteTurn ? "X" : "O";
           break;
         }
       }
     }
-    return [...board];
+    return { newBoard: board, isGameOver: false };
   }
 
   export function isBoardFull(board: Board): boolean {
