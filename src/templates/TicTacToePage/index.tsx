@@ -17,7 +17,7 @@ export const TicTacToePage: NextPage = () => {
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' ', ' ', ' '],
   ]);
-  const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White is player and red is computer
+  const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White / X is player and red / O is computer
   const [gameWon, setGameWon] = useState(false);  
 
   // Reset the game after a win
@@ -62,12 +62,12 @@ export const TicTacToePage: NextPage = () => {
 
   const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {
     const boardCopy = [...board.map(row => [...row])];
-      const {newBoard, isGameOver} = makeMove(boardCopy, move.col, isWhiteTurn);
+      const newBoard = makeMove(boardCopy, move.col, isWhiteTurn);
       setBoard(newBoard);
       
-      if (isGameOver) {
+      if (hasFourInARow(newBoard)) {
+        setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 100);
         setGameWon(true);
-        alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`)
       } else {
         setIsWhiteTurn(cur => !cur); // Switch turns
       }    
@@ -99,8 +99,8 @@ export const TicTacToePage: NextPage = () => {
                     handleClick(rowIndex, colIndex)
                   }
                 }}
-              >
-                {cell === 'X' ? <Image src="./white.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./red.svg" width={100} height={100} alt="O" /> : null}
+              >                
+                {cell === 'X' ? <Image src="./white.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./red.svg" width={100} height={100} alt="O" /> : null}                
               </button>
             ))}
           </div>

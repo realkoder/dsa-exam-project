@@ -1,59 +1,83 @@
 import { Board } from "@/types/Board";
-import { Cell } from "@/types/Cell";
 
-function checkDirection(board: Board, row: number, col: number, dirRow: number, dirCol: number, symbol: Cell, count: number = 1): boolean {
-    const nextRow = row + dirRow;
-    const nextCol = col + dirCol;
-  
-    if (count === 4) {
-      return true;
+export function hasFourInARow(board: Board) {
+  // Check for horizontal four in a row
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (
+        board[row][col] !== ' ' &&
+        board[row][col] === board[row][col + 1] &&
+        board[row][col] === board[row][col + 2] &&
+        board[row][col] === board[row][col + 3]
+      ) {
+        return board[row][col];
+      }
     }
-  
-    // Base case for failure
-    if (nextRow < 0 || nextRow >= board.length || nextCol < 0 || nextCol >= board[0].length || board[nextRow][nextCol] !== symbol) {
-      return false;
+  }
+
+  // Check for vertical four in a row
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 7; col++) {
+      if (
+        board[row][col] !== ' ' &&
+        board[row][col] === board[row + 1][col] &&
+        board[row][col] === board[row + 2][col] &&
+        board[row][col] === board[row + 3][col]
+      ) {
+        return board[row][col];
+      }
     }
-  
-    // Recursive call to continue checking in the direction
-    return checkDirection(board, nextRow, nextCol, dirRow, dirCol, symbol, count + 1);
   }
-  
-  // Checks all directions from a cell to find four in a row
-  export function hasFourInARow(board: Board, row: number, col: number, symbol: Cell): boolean {
-    const directions = [
-      [-1, 0], // Up
-      [1, 0],  // Down
-      [0, -1], // Left
-      [0, 1],  // Right
-      [-1, -1],// Diagonal Up-Left
-      [-1, 1], // Diagonal Up-Right
-      [1, -1], // Diagonal Down-Left
-      [1, 1]   // Diagonal Down-Right
-    ];
-    
-    // Iterate over all directions, check if four in a row exists
-    return directions.some(([dirRow, dirCol]) => checkDirection(board, row, col, dirRow, dirCol, symbol));
+
+  // Check for diagonal (top-left to bottom-right) four in a row
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (
+        board[row][col] !== ' ' &&
+        board[row][col] === board[row + 1][col + 1] &&
+        board[row][col] === board[row + 2][col + 2] &&
+        board[row][col] === board[row + 3][col + 3]
+      ) {
+        return board[row][col];      }
+    }
   }
+
+  // Check for diagonal (top-right to bottom-left) four in a row
+  for (let row = 0; row < 3; row++) {
+    for (let col = 3; col < 7; col++) {
+      if (
+        board[row][col] !== ' ' &&
+        board[row][col] === board[row + 1][col - 1] &&
+        board[row][col] === board[row + 2][col - 2] &&
+        board[row][col] === board[row + 3][col - 3]
+      ) {
+        return board[row][col];
+      }
+    }
+  }
+
+  return null;
+}
 
   export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {    
-    if (board[5][col] === " ") {
-      if (hasFourInARow(board, 5, col, isWhiteTurn ? "X" : "O")) {
-        return {newBoard: board, isGameOver: true };
+    if (board[5][col] === " ") {      
+      if (hasFourInARow(board)) {
+      return board;
       }
       board[5][col] = isWhiteTurn ? "X" : "O";
-    }else {      
-      for (let row = 0; col <= 5; row++) {
+    }else {
+      for (let row = 0; row <= 5; row++) {
         const curPos = board[row][col];         
-        if (curPos !== " " && row > 0) {
-          if (hasFourInARow(board, row, col, isWhiteTurn ? "X" : "O")) {
-            return { newBoard: board, isGameOver: true };
+        if (curPos !== " " && row > 0) {          
+          if (hasFourInARow(board)) {
+          return board;
           }
           board[row-1][col] = isWhiteTurn ? "X" : "O";
           break;
         }
       }
     }
-    return { newBoard: board, isGameOver: false };
+    return board;
   }
 
   export function isBoardFull(board: Board): boolean {
