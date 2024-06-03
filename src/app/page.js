@@ -1,8 +1,0 @@
-
-export default function Home() {
-  return (
-    <main>
-      <h1>Continuous Snake Game</h1>
-    </main>
-  );
-}
