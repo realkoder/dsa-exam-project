@@ -77,7 +77,7 @@ function evaluatePosition(board: Board, row: number, col: number, symbol: Cell):
 }
 
 function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number): number {
-    const boardCopy = [...board.map(row => [...row])];
+    const boardCopy = board.map(row => [...row]);
     
     const winner = hasFourInARow(board);
     if (winner !== null) return winner === 'X' ? -1 : 1;
@@ -90,10 +90,10 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
             maxEval = Math.max(maxEval, evaluation);
             alpha = Math.max(alpha, evaluation);
             if (beta <= alpha) break;
-        }        
+        }
         return maxEval;
     } else {
-        let minEval = Infinity;        
+        let minEval = Infinity;
         for (let move of getPossibleMoves(board)) {
             const evaluation = minimaxWithAlphaBeta(makeMove(boardCopy, move.col, true), depth - 1, true, alpha, beta);
             minEval = Math.min(minEval, evaluation);
@@ -105,7 +105,7 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
 }
 
 
-export function computersMove(board: Board, depth: number = 2): Move {
+export function computersMove(board: Board, depth: number = 5): Move {
     let bestScore = -Infinity;
     let bestMove: Move | null = null;
     const moves = getPossibleMoves(board);

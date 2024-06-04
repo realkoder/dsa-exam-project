@@ -59,8 +59,8 @@ export function hasFourInARow(board: Board) {
   return null;
 }
 
-  export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {    
-    if (board[5][col] === " ") {      
+  export function makeMove(board: Board, col: number, isWhiteTurn: boolean) {
+    if (board[5][col] === " ") {
       if (hasFourInARow(board)) {
       return board;
       }

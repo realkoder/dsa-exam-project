@@ -8,15 +8,8 @@ import { computersMove } from '@/utilities/AlphaBeta';
 import { Cell } from '@/types/Cell';
 
 
-export const TicTacToePage: NextPage = () => {    
-  const [board, setBoard] = useState<Board>([
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-  ]);
+export const TicTacToePage: NextPage = () => {
+  const [board, setBoard] = useState<Board>(Array.from({ length: 6 }, () => Array(7).fill(" ")));
   const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White / X is player and red / O is computer
   const [gameWon, setGameWon] = useState(false);  
 
@@ -35,14 +28,7 @@ export const TicTacToePage: NextPage = () => {
   }, [gameWon]);
 
   const handleReset = () => {
-    setBoard([
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' '],
-    ]);
+    setBoard(Array.from({ length: 6 }, () => Array(7).fill(" ")));
     setIsWhiteTurn(true);
   };
 
@@ -51,7 +37,7 @@ export const TicTacToePage: NextPage = () => {
       // Artificial delay to simulate the computer "thinking"
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
-        const boardCopy = [...board.map(row => [...row])];
+        const boardCopy = board.map(row => [...row]);
         const computerMove = computersMove(boardCopy);
         if (computerMove) {
           makeMoveAndUpdateBoard(computerMove, 'O'); // 'O' represents the computer's move
@@ -61,7 +47,7 @@ export const TicTacToePage: NextPage = () => {
   }, [isWhiteTurn, gameWon]);
 
   const makeMoveAndUpdateBoard = (move: {row: number, col: number}, player: Cell) => {
-    const boardCopy = [...board.map(row => [...row])];
+    const boardCopy = board.map(row => [...row]);
       const newBoard = makeMove(boardCopy, move.col, isWhiteTurn);
       setBoard(newBoard);
       
@@ -69,7 +55,7 @@ export const TicTacToePage: NextPage = () => {
         setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 100);
         setGameWon(true);
       } else {
-        setIsWhiteTurn(cur => !cur); // Switch turns
+        setIsWhiteTurn(cur => !cur);
       }    
   };
 
