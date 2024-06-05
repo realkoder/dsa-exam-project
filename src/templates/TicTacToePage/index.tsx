@@ -11,9 +11,10 @@ import { motion } from 'framer-motion';
 type TicTacToePageProps = {
   difficulty: number;
   handleGoBackToMenu: () => void;
+  setDifficulty: (difficulty: number) => void;
 };
 
-export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handleGoBackToMenu }) => {
+export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handleGoBackToMenu, setDifficulty }) => {
   const [board, setBoard] = useState<Board>(Array.from({ length: 6 }, () => Array(7).fill(" ")));
   const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White / X is player and red / O is computer
   const [gameWon, setGameWon] = useState(false);
@@ -81,6 +82,13 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
     }
   };
 
+  console.log("Difficulty: ", difficulty)
+
+
+  const handleResetGame = () => {
+    handleReset();
+    setDifficulty(difficulty);
+  }
 
 
   return (
@@ -93,7 +101,14 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
         Go Back to Menu
       </button>
 
-      <h1 className="text-4xl font-bold mb-12 font-serif">Fire På Stribe!</h1>
+      <button
+        onClick={handleResetGame}
+        className='flex justify-center m-4 my-6 px-6 mb-8 py-2 text-[26px] font-medium bg-blue-500 text-white w-fit transition-all 
+                shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] rounded-xl'>
+        Reset Game
+      </button>
+
+      <h1 className="text-4xl font-bold mb-12">Fire På Stribe!</h1>
 
       <div className="grid grid-row-3 gap-4">
         {board.map((row, rowIndex) => (
