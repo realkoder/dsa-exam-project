@@ -41,7 +41,7 @@ export const TicTacToePage: NextPage = () => {
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
         const boardCopy = [...board.map(row => [...row])];
-        const computerMoveResult = computersMove(boardCopy, 10);
+        const computerMoveResult = computersMove(boardCopy, 0);
         if (computerMoveResult) {
           const { move, possibleNodes, exploredNodes } = computerMoveResult;
           makeMoveAndUpdateBoard(move, 'O'); // 'O' represents the computer's move
@@ -53,7 +53,7 @@ export const TicTacToePage: NextPage = () => {
   }, [isWhiteTurn, gameWon]);
 
   const makeMoveAndUpdateBoard = (move: { row: number; col: number }, player: Cell) => {
-    const boardCopy = [...board.map(row => [...row])];
+    const boardCopy = board.map(row => [...row]);
     const newBoard = makeMove(boardCopy, move.col, isWhiteTurn);
     setBoard(newBoard);
 
@@ -67,6 +67,7 @@ export const TicTacToePage: NextPage = () => {
 
   const handleClick = (row: number, col: number) => {
     if (board[row][col] === ' ' && !gameWon && isWhiteTurn) {
+      console.log('Player move:', row, col);
       makeMoveAndUpdateBoard({ row, col }, 'X');
     } else {
       alert('INVALID MOVE');

@@ -11,18 +11,6 @@ export const EVALUATION_BOARD = [
 
     
     export function evaluatePosition(board: Board, row: number, col: number, symbol: string): number {
-        let xScore = 0;
-        let oScore = 0;
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === 'X') {
-                    xScore += EVALUATION_BOARD[i][j];
-                } else if (board[i][j] === 'O') {
-                    oScore += EVALUATION_BOARD[i][j];
-                }
-            }
-        }
-    
         let score = 0;
         const directions = [
             [-1,  0], [ 1, 0],  // Vertical
