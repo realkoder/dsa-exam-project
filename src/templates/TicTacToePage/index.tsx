@@ -6,8 +6,14 @@ import { Board } from '@/types/Board';
 import { hasFourInARow, makeMove } from '@/utilities/TicTacToeEngine';
 import { computersMove } from '@/utilities/AlphaBeta';
 import { Cell } from '@/types/Cell';
+import { motion } from 'framer-motion';
 
-export const TicTacToePage: NextPage = () => {
+type TicTacToePageProps = {
+  difficulty: number;
+  handleGoBackToMenu: () => void;
+};
+
+export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handleGoBackToMenu }) => {
   const [board, setBoard] = useState<Board>(Array.from({ length: 6 }, () => Array(7).fill(" ")));
   const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White / X is player and red / O is computer
   const [gameWon, setGameWon] = useState(false);
@@ -52,6 +58,8 @@ export const TicTacToePage: NextPage = () => {
     }
   }, [isWhiteTurn, gameWon]);
 
+
+
   const makeMoveAndUpdateBoard = (move: { row: number; col: number }, player: Cell) => {
     const boardCopy = board.map(row => [...row]);
     const newBoard = makeMove(boardCopy, move.col, isWhiteTurn);
@@ -74,31 +82,57 @@ export const TicTacToePage: NextPage = () => {
     }
   };
 
+
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+
+      <button
+        onClick={handleGoBackToMenu}
+        className='absolute top-0 left-0 m-4 px-6 py-2 text-[26px] font-medium bg-red-500 text-white w-fit transition-all 
+                shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] rounded-xl'>
+        Go Back to Menu
+      </button>
+
       <h1 className="text-4xl font-bold mb-12 font-serif">Fire På Stribe!</h1>
 
       <div className="grid grid-row-3 gap-4">
         {board.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-4 cursor-pointer">
-            {row.map((cell, colIndex) => (
-              <button
-                className="h-32 w-32 border rounded-lg border-blue-400 bg-blue-400 flex items-center justify-center font-bold font-mono text-9xl"
-                key={colIndex}
-                onClick={() => {
-                  if (gameWon) {
-                    alert('GAME IS OVER');
-                  } else {
-                    handleClick(rowIndex, colIndex);
-                  }
-                }}
-              >
-                {cell === 'X' ? <Image src="./white.svg" width={100} height={100} alt="X" /> : cell === 'O' ? <Image src="./red.svg" width={100} height={100} alt="O" /> : null}
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
+          {row.map((cell, colIndex) => (
+            <button
+              className="h-32 w-32 border rounded-lg border-blue-400 bg-neutral-100 flex items-center justify-center font-bold font-mono text-9xl"
+              key={colIndex}
+              onClick={() => {
+                if (gameWon) {
+                  alert('GAME IS OVER');
+                } else {
+                  handleClick(rowIndex, colIndex);
+                }
+              }}
+            >
+              {cell === 'X' ? (
+                <motion.div
+                  initial={{ y: -700, opacity: 1 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                >
+                  <Image src="./white.svg" width={100} height={100} alt="X" />
+                </motion.div>
+              ) : cell === 'O' ? (
+                <motion.div
+                  initial={{ y: -700, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                >
+                  <Image src="./red.svg" width={100} height={100} alt="O" />
+                </motion.div>
+              ) : null}
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
 
       <div className="mt-8">
         <p>Possible Nodes: {possibleNodes}</p>
