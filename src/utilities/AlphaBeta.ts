@@ -1,6 +1,7 @@
 import { Board } from "@/types/Board";
 import { hasFourInARow, isBoardFull, makeMove } from "./TicTacToeEngine";
 import { Cell } from "@/types/Cell";
+import { EVALUATION_BOARD, evaluatePosition } from "./SVTHandler";
 
 type Move = {
     row: number;
@@ -11,73 +12,24 @@ let possibleNodes = 0;
 let exploredNodes = 0;
 
 function evaluateBoard(board: Board): number {
-    let score = 0;
+    let xScore = 0;
+    let oScore = 0;
 
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[row].length; col++) {
             if (board[row][col] === 'X') {
-                score += evaluatePosition(board, row, col, 'X');
+                xScore += evaluatePosition(board, row, col, 'X');
+                xScore += EVALUATION_BOARD[row][col];
             } else if (board[row][col] === 'O') {
-                score -= evaluatePosition(board, row, col, 'O');
+                oScore -= evaluatePosition(board, row, col, 'O');
+                oScore -= EVALUATION_BOARD[row][col];
             }
         }
     }
 
-    return score;
+    return xScore - oScore;
 }
 
-function evaluatePosition(board: Board, row: number, col: number, symbol: Cell): number {
-    let score = 0;
-    const directions = [
-        [-1, 0], [1, 0],  // Vertical
-        [0, -1], [0, 1],  // Horizontal
-        [-1, -1], [-1, 1], // Diagonal
-        [1, -1], [1, 1]   // Diagonal
-    ];
-
-    for (let [dirRow, dirCol] of directions) {
-        let count = 0;
-        for (let i = 0; i < 4; i++) {
-            const newRow = row + dirRow * i;
-            const newCol = col + dirCol * i;            
-            if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length && board[newRow][newCol] === symbol) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        if (count === 4) {
-            score += 1000;
-        } else if (count === 3) {
-            score += 100;
-        } else if (count === 2) {
-            score += 10;
-        }
-
-        // Evaluate the opponent
-        const opponent = symbol === 'X' ? 'O' : 'X';
-        count = 0;
-        for (let i = 0; i < 4; i++) {
-            const newRow = row + dirRow * i;
-            const newCol = col + dirCol * i;            
-            if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length && board[newRow][newCol] === opponent) {
-                count++;
-            } else {
-                break;
-            }
-        }
-
-        if (count === 4) {
-            score -= 1000;
-        } else if (count === 3) {
-            score -= 100;
-        } else if (count === 2) {
-            score -= 10;
-        }
-    }
-
-    return score;
-}
 
 function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number): number {
     possibleNodes++;
