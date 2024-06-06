@@ -1,11 +1,12 @@
 import { Board } from "@/types/Board";
-import { hasFourInARow, isBoardFull, makeMove } from "./TicTacToeEngine";
-import { Cell } from "@/types/Cell";
+import { hasFourInARow, isBoardFull, makeMove, undoMove } from "./TicTacToeEngine";
 import { EVALUATION_BOARD, evaluatePosition } from "./SVTHandler";
+import PriorityQueue from "@/modules/Queue/PriorityQueue";
 
 type Move = {
     row: number;
     col: number;
+    score: number;
 };
 
 let possibleNodes = 0;
@@ -34,8 +35,6 @@ function evaluateBoard(board: Board): number {
 function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number): number {
     possibleNodes++;
     
-    const boardCopy = [...board.map(row => [...row])];
-    
     const winner = hasFourInARow(board);
     if (winner !== null) {
         exploredNodes++;
@@ -46,11 +45,16 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
         return evaluateBoard(board);
     }
 
+    const moves = getPossibleMoves(board);
+
     if (isMaximizingPlayer) {
         let maxEval = -Infinity;
-        for (let move of getPossibleMoves(board)) {
-            const newBoard = makeMove(boardCopy, move.col, false);
+
+        while (!moves.isEmpty()) {
+            const move = moves.removeFirst();
+            const newBoard = makeMove(board, move?.col!, false);
             const evaluation = minimaxWithAlphaBeta(newBoard, depth - 1, false, alpha, beta);
+            undoMove(board, move?.col!);
             maxEval = Math.max(maxEval, evaluation);
             alpha = Math.max(alpha, evaluation);
             if (beta <= alpha) break;
@@ -58,13 +62,17 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
         return maxEval;
     } else {
         let minEval = Infinity;
-        for (let move of getPossibleMoves(board)) {
-            const newBoard = makeMove(boardCopy, move.col, true);
+
+        while (!moves.isEmpty()) {
+            const move = moves.removeFirst();
+            const newBoard = makeMove(board, move?.col!, true);
             const evaluation = minimaxWithAlphaBeta(newBoard, depth - 1, true, alpha, beta);
+            undoMove(board, move?.col!);
             minEval = Math.min(minEval, evaluation);
             beta = Math.min(beta, evaluation);
             if (beta <= alpha) break;
         }
+
         return minEval;
     }
 }
@@ -78,28 +86,72 @@ export function computersMove(board: Board, depth: number = 2): { move: Move, po
     possibleNodes = 0;
     exploredNodes = 0;
 
-    for (let move of moves) {
-        const newBoard = makeMove(board, move.col, true);
-        const score = minimaxWithAlphaBeta(newBoard, depth, false, -Infinity, Infinity);
+    while (!moves.isEmpty()) {
+        const move = moves.removeFirst();
+
+
+        switch(depth) {
+            case 4: {
+                // Medium difficulty, only block if the player is about to win
+                makeMove(board, move?.col!, true);
+                if (hasFourInARow(board) === 'X') {
+                    undoMove(board, move?.col!);
+                    console.log('Blocking move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+                break;
+            }
+            case 6: {
+                // Hard difficulty, block and win if possible
+                makeMove(board, move?.col!, false);
+                if (hasFourInARow(board) === 'O') {
+                    undoMove(board, move?.col!);
+                    console.log('Winning move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+
+                // Simulate move for 'X' to check for blocking
+                makeMove(board, move?.col!, true);
+                if (hasFourInARow(board) === 'X') {
+                    undoMove(board, move?.col!);
+                    console.log('Blocking move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+
+        makeMove(board, move?.col!, true);
+        const score = minimaxWithAlphaBeta(board, depth - 1, false, -Infinity, Infinity);
+        undoMove(board, move?.col!);
 
         if (score > bestScore) {
             bestScore = score;
-            bestMove = move;            
+            bestMove = move!;
         }
     }
 
     return { move: bestMove!, possibleNodes, exploredNodes };
 }
 
-function getPossibleMoves(board: Board): Move[] {
-    const moves: Move[] = [];
-    for (let col = 0; col < board[0].length; col++) {
-        for (let row = board.length - 1; row >= 0; row--) {
-            if (board[row][col] === ' ') {
-                moves.push({ row, col });
-                break;
+
+function getPossibleMoves(board: Board): PriorityQueue<Move> {
+    const movesQueue: PriorityQueue<Move> = new PriorityQueue((a, b) => (b.score - a.score));
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+            if (board[row][col] === ' ' && (row === 5 || board[row+1][col] !== ' ')) {
+                movesQueue.add({ row, col, score: EVALUATION_BOARD[row][col] });
             }
         }
     }
-    return moves;
+    return movesQueue;
 }
+
+

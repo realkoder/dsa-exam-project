@@ -27,7 +27,7 @@ const GameMenuPage = ({ difficulty, setDifficulty }: GameMenuPageProps) => {
                 damping: 6,
                 duration: 0.5
             }
-        })
+        })        
     };
 
 
@@ -61,13 +61,13 @@ const GameMenuPage = ({ difficulty, setDifficulty }: GameMenuPageProps) => {
                     Easy
                 </button>
                 <button
-                onClick={() => handleSetDifficulty(6)}
+                onClick={() => handleSetDifficulty(4)}
                 className='px-6 py-2 text-[40px] font-medium bg-[#3661ff] text-white w-fit transition-all 
                 shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] rounded-xl'>
                     Medium
                 </button>
                 <button 
-                onClick={() => handleSetDifficulty(10)}
+                onClick={() => handleSetDifficulty(6)}
                 className='px-6 py-2 text-[40px] font-medium bg-red-500 text-white w-fit transition-all 
                 shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] rounded-xl'>
                     Hard

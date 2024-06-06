@@ -29,7 +29,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
       const timeout = setTimeout(() => {
         handleReset();
         setGameWon(false); // Reset gameWon to allow a new game to start
-      }, 2000); // 2 seconds delay
+      }, 5000); // 2 seconds delay
 
       return () => clearTimeout(timeout);
     }
@@ -47,7 +47,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
       // Artificial delay to simulate the computer "thinking"
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
-        const boardCopy = [...board.map(row => [...row])];
+        const boardCopy = board.map(row => [...row]);
         const computerMoveResult = computersMove(boardCopy, difficulty);
         if (computerMoveResult) {
           const { move, possibleNodes, exploredNodes } = computerMoveResult;
@@ -62,12 +62,12 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
 
 
   const makeMoveAndUpdateBoard = (move: { row: number; col: number }, player: Cell) => {
-    const boardCopy = [...board.map(row => [...row])];
+    const boardCopy = board.map(row => [...row]);
     const newBoard = makeMove(boardCopy, move.col, isWhiteTurn);
     setBoard(newBoard);
 
     if (hasFourInARow(newBoard)) {
-      setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 100);
+      setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 1000);
       setGameWon(true);
     } else {
       setIsWhiteTurn((cur) => !cur); // Switch turns
@@ -76,6 +76,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
 
   const handleClick = (row: number, col: number) => {
     if (board[row][col] === ' ' && !gameWon && isWhiteTurn) {
+
       makeMoveAndUpdateBoard({ row, col }, 'X');
     } else {
       alert('INVALID MOVE');
@@ -108,7 +109,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
         Reset Game
       </button>
 
-      <h1 className="text-4xl font-bold mb-12">Fire På Stribe!</h1>
+      <h1 className="text-4xl font-bold mb-12">Connect Four!</h1>
 
       <div className="grid grid-row-3 gap-4">
         {board.map((row, rowIndex) => (
