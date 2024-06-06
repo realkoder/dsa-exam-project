@@ -28,7 +28,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
       const timeout = setTimeout(() => {
         handleReset();
         setGameWon(false); // Reset gameWon to allow a new game to start
-      }, 2000); // 2 seconds delay
+      }, 5000); // 2 seconds delay
 
       return () => clearTimeout(timeout);
     }
@@ -46,8 +46,8 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
       // Artificial delay to simulate the computer "thinking"
       const delay = 600; // Delay in milliseconds (e.g., 1000ms = 1 second)
       setTimeout(() => {
-        const boardCopy = [...board.map(row => [...row])];
-        const computerMoveResult = computersMove(boardCopy, 0);
+        const boardCopy = board.map(row => [...row]);
+        const computerMoveResult = computersMove(boardCopy, difficulty);
         if (computerMoveResult) {
           const { move, possibleNodes, exploredNodes } = computerMoveResult;
           makeMoveAndUpdateBoard(move, 'O'); // 'O' represents the computer's move
@@ -66,7 +66,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
     setBoard(newBoard);
 
     if (hasFourInARow(newBoard)) {
-      setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 100);
+      setTimeout(() => alert(`Game is over - ${player === 'X' ? 'you' : 'computer'} did win the game!`), 1000);
       setGameWon(true);
     } else {
       setIsWhiteTurn((cur) => !cur); // Switch turns
@@ -75,7 +75,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
 
   const handleClick = (row: number, col: number) => {
     if (board[row][col] === ' ' && !gameWon && isWhiteTurn) {
-      console.log('Player move:', row, col);
+
       makeMoveAndUpdateBoard({ row, col }, 'X');
     } else {
       alert('INVALID MOVE');
@@ -94,7 +94,7 @@ export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handle
         Go Back to Menu
       </button>
 
-      <h1 className="text-4xl font-bold mb-12 font-serif">Fire På Stribe!</h1>
+      <h1 className="text-4xl font-bold mb-12 font-serif">Connect Four!</h1>
 
       <div className="grid grid-row-3 gap-4">
         {board.map((row, rowIndex) => (

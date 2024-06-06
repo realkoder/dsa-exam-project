@@ -1,5 +1,5 @@
 import { Board } from "@/types/Board";
-import { hasFourInARow, isBoardFull, makeMove } from "./TicTacToeEngine";
+import { hasFourInARow, isBoardFull, makeMove, undoMove } from "./TicTacToeEngine";
 import { EVALUATION_BOARD, evaluatePosition } from "./SVTHandler";
 import PriorityQueue from "@/modules/Queue/PriorityQueue";
 
@@ -35,8 +35,6 @@ function evaluateBoard(board: Board): number {
 function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: boolean, alpha: number, beta: number): number {
     possibleNodes++;
     
-    const boardCopy = [...board.map(row => [...row])];
-    
     const winner = hasFourInARow(board);
     if (winner !== null) {
         exploredNodes++;
@@ -54,8 +52,9 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
 
         while (!moves.isEmpty()) {
             const move = moves.removeFirst();
-            const newBoard = makeMove(boardCopy, move?.col!, false);
-            const evaluation = minimaxWithAlphaBeta(newBoard, depth - 1, true, alpha, beta);
+            const newBoard = makeMove(board, move?.col!, false);
+            const evaluation = minimaxWithAlphaBeta(newBoard, depth - 1, false, alpha, beta);
+            undoMove(board, move?.col!);
             maxEval = Math.max(maxEval, evaluation);
             alpha = Math.max(alpha, evaluation);
             if (beta <= alpha) break;
@@ -66,8 +65,9 @@ function minimaxWithAlphaBeta(board: Board, depth: number, isMaximizingPlayer: b
 
         while (!moves.isEmpty()) {
             const move = moves.removeFirst();
-            const newBoard = makeMove(boardCopy, move?.col!, false);
+            const newBoard = makeMove(board, move?.col!, true);
             const evaluation = minimaxWithAlphaBeta(newBoard, depth - 1, true, alpha, beta);
+            undoMove(board, move?.col!);
             minEval = Math.min(minEval, evaluation);
             beta = Math.min(beta, evaluation);
             if (beta <= alpha) break;
@@ -88,8 +88,49 @@ export function computersMove(board: Board, depth: number = 2): { move: Move, po
 
     while (!moves.isEmpty()) {
         const move = moves.removeFirst();
-        const newBoard = makeMove(board, move?.col!, true);
-        const score = minimaxWithAlphaBeta(newBoard, depth - 1, false, -Infinity, Infinity);
+
+
+        switch(depth) {
+            case 4: {
+                // Medium difficulty, only block if the player is about to win
+                makeMove(board, move?.col!, true);
+                if (hasFourInARow(board) === 'X') {
+                    undoMove(board, move?.col!);
+                    console.log('Blocking move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+                break;
+            }
+            case 6: {
+                // Hard difficulty, block and win if possible
+                makeMove(board, move?.col!, false);
+                if (hasFourInARow(board) === 'O') {
+                    undoMove(board, move?.col!);
+                    console.log('Winning move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+
+                // Simulate move for 'X' to check for blocking
+                makeMove(board, move?.col!, true);
+                if (hasFourInARow(board) === 'X') {
+                    undoMove(board, move?.col!);
+                    console.log('Blocking move');
+                    return { move: move!, possibleNodes, exploredNodes };
+                }
+                undoMove(board, move?.col!);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+
+        makeMove(board, move?.col!, true);
+        const score = minimaxWithAlphaBeta(board, depth - 1, false, -Infinity, Infinity);
+        undoMove(board, move?.col!);
 
         if (score > bestScore) {
             bestScore = score;
@@ -100,6 +141,7 @@ export function computersMove(board: Board, depth: number = 2): { move: Move, po
     return { move: bestMove!, possibleNodes, exploredNodes };
 }
 
+
 function getPossibleMoves(board: Board): PriorityQueue<Move> {
     const movesQueue: PriorityQueue<Move> = new PriorityQueue((a, b) => (b.score - a.score));
     for (let row = 0; row < board.length; row++) {
@@ -109,9 +151,6 @@ function getPossibleMoves(board: Board): PriorityQueue<Move> {
             }
         }
     }
-
-    console.log("-----------------")
-    console.log(movesQueue.getFirst());
     return movesQueue;
 }
 

@@ -80,6 +80,16 @@ export function hasFourInARow(board: Board) {
     return board;
   }
 
+  export function undoMove(board: Board, col: number) {
+    for (let row = 0; row < 6; row++) {
+        if (board[row][col] !== ' ') {
+            board[row][col] = ' ';
+            break;
+        }
+    }
+    return board;
+}
+
   export function isBoardFull(board: Board): boolean {
     return board.every(row => row.every(cell => cell !== ' '));
 }
