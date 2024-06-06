@@ -1,5 +1,5 @@
 import { Board } from "@/types/Board";
-import { hasFourInARow, isBoardFull, makeMove, undoMove } from "./TicTacToeEngine";
+import { hasFourInARow, isBoardFull, makeMove, undoMove } from "./ConnectFourEngine";
 import { EVALUATION_BOARD, evaluatePosition } from "./SVTHandler";
 import PriorityQueue from "@/modules/Queue/PriorityQueue";
 
