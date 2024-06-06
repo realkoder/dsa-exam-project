@@ -22,7 +22,7 @@ export default function Home() {
           setBackToMenu(false);
         }} />
       ) : (
-        <TicTacToePage difficulty={difficulty} handleGoBackToMenu={handleGoBackToMenu} />
+        <TicTacToePage difficulty={difficulty} handleGoBackToMenu={handleGoBackToMenu} setDifficulty={setDifficulty}/>
       )}
     </>
   );

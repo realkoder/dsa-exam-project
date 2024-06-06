@@ -27,10 +27,10 @@ const GameMenuPage = ({ difficulty, setDifficulty }: GameMenuPageProps) => {
                 damping: 6,
                 duration: 0.5
             }
-        })
+        })        
     };
 
-    // Function to trigger the reset of the animation
+
     const triggerReset = () => {
         setAnimationCycle(cycle => cycle + 1); 
     };
