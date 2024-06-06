@@ -1,7 +1,7 @@
 "use client";
 
 import GameMenuPage from "@/templates/GameMenuPage";
-import { TicTacToePage } from "@/templates/TicTacToePage";
+import { ConnectFourPage } from "@/templates/ConnectFourPage";
 import { useState } from "react";
 
 export default function Home() {
@@ -22,7 +22,7 @@ export default function Home() {
           setBackToMenu(false);
         }} />
       ) : (
-        <TicTacToePage difficulty={difficulty} handleGoBackToMenu={handleGoBackToMenu} setDifficulty={setDifficulty}/>
+        <ConnectFourPage difficulty={difficulty} handleGoBackToMenu={handleGoBackToMenu} setDifficulty={setDifficulty}/>
       )}
     </>
   );

@@ -3,18 +3,18 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { Board } from '@/types/Board';
-import { hasFourInARow, makeMove } from '@/utilities/TicTacToeEngine';
+import { hasFourInARow, makeMove } from '@/utilities/ConnectFourEngine';
 import { computersMove } from '@/utilities/AlphaBeta';
 import { Cell } from '@/types/Cell';
 import { motion } from 'framer-motion';
 
-type TicTacToePageProps = {
+type ConnectFourPageProps = {
   difficulty: number;
   handleGoBackToMenu: () => void;
   setDifficulty: (difficulty: number) => void;
 };
 
-export const TicTacToePage: NextPage<TicTacToePageProps> = ({ difficulty, handleGoBackToMenu, setDifficulty }) => {
+export const ConnectFourPage: NextPage<ConnectFourPageProps> = ({ difficulty, handleGoBackToMenu, setDifficulty }) => {
   const [board, setBoard] = useState<Board>(Array.from({ length: 6 }, () => Array(7).fill(" ")));
   const [isWhiteTurn, setIsWhiteTurn] = useState(true); // White / X is player and red / O is computer
   const [gameWon, setGameWon] = useState(false);
