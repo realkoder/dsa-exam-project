@@ -27,7 +27,7 @@ const GameMenuPage = ({ difficulty, setDifficulty }: GameMenuPageProps) => {
                 damping: 6,
                 duration: 0.5
             }
-        })
+        })        
     };
 
 
